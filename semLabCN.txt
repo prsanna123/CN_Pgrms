@@ -1,0 +1,525 @@
+set 1
+
+1)
+ping services
+
+import java.io.*; 
+import java.net.*; 
+import java.util.Scanner;
+class Main
+ {   // Sends ping request to a provided IP address 
+  public static void sendPingRequest(String ipAddress) 
+              throws UnknownHostException, IOException 
+  { 
+    InetAddress geek = InetAddress.getByName(ipAddress); 
+    System.out.println("Sending Ping Request to " + ipAddress); 
+    if (geek.isReachable(5000)) 
+      System.out.println("Host is reachable"); 
+    else
+      System.out.println("Sorry ! We can't reach to this host"); 
+  } 
+    // Driver code 
+  public static void main(String[] args) 
+          throws UnknownHostException, IOException 
+{   
+  String ipAddress;
+  Scanner sc=new Scanner(System.in);
+  System.out.println("Enter ipAddress");
+  ipAddress=sc.next();
+  sendPingRequest(ipAddress);
+} 
+}
+
+
+
+OUTPUT: If the host is reachable.
+Enter ipAddress
+127.0.0.1
+Sending Ping Request to 127.0.0.1
+Host is reachable
+If the host is not reachable.
+java -cp /tmp/YkAJvU438p Main
+
+Enter ipAddress192.168.0.1
+Sending Ping Request to 192.168.0.1Sorry ! We can't reach to this host
+
+
+
+
+
+2)
+TCP iterative client and server application to reverse the given input sentence.
+
+server.py
+
+import asyncio
+import websockets
+
+async def hello(websocket):
+    while(True):
+        name = await websocket.recv()
+        print(f"<<< {name}")
+        greeting = f"Hello {name}!"
+        await websocket.send(greeting)
+
+async def main():
+    async with websockets.serve(hello, "localhost", 8088):
+        await asyncio.Future()  # run forever
+
+if __name__ == "__main__":
+    asyncio.run(main())
+
+
+client.py
+import asyncio
+import websockets
+
+async def hello():
+    uri = "ws://localhost:8088" 
+    async with websockets.connect(uri) as websocket:
+        while(True):
+            name = input("What's your name? ") 
+            await websocket.send(reversed (name)) 
+            print (f">>> {name}") 
+            greeting = await websocket.recv() 
+            print("<<< (greeting}")
+
+if __name__=="__main__":
+    asyncio.run(hello())
+
+
+
+
+
+
+
+set-2
+1)Sliding Window Protocol.
+
+#include<stdio.h>
+int main(){
+	int n,f,frames[30],i;
+	printf("Enter window size : ");
+	scanf("%d",&n);
+	printf("Enter number of frames to transmit: ");
+	scanf("%d",&f);
+	printf("Enter %d frames: \n",f);
+	for(i=1;i<=f;i++){
+		scanf("%d",&frames[i]);
+	}
+	printf("\nWith sliding window protocol the frames will be sent in the following manner (assuming no corruption of frames)\n\n");
+	printf("After sending %d frames at each stage sender waits for acknowledgement sent by the receiver\n\n",n);
+
+	for(i=1;i<=f;i++){
+		if(i%n==0){
+			printf("%d ",frames[i]);
+			printf("\nAcknowledgement of above frames sent is received by sender\n\n");
+
+		}
+		else{
+			//printf("recieved by sender\n");
+			printf("%d ",frames[i]);
+		}
+	}
+	if(f%n!=0){
+	printf("\nAcknowledgement of above frames sent is received by sender\n");
+
+	}
+}
+
+
+
+
+output:
+Enter window size : 3
+Enter number of frames to transmit: 5
+Enter 5 frames:
+12
+5
+89
+4
+6
+
+With sliding window protocol the frames will be sent in the following manner (assuming no corruption of frames)
+
+After sending 3 frames at each stage sender waits for acknowledgement sent by the receiver
+
+12 5 89
+Acknowledgement of above frames sent is received by sender
+
+4 6
+Acknowledgement of above frames sent is received by sender
+
+
+
+
+
+
+2)
+Distance Vector Algorithm
+
+
+#include<stdio.h>
+struct node
+{
+	unsigned dist[20];
+	unsigned from[20];
+}rt[10];
+int main()
+{
+	int dmat[20][20];
+	int n,i,j,k,count=0;
+	printf("\nEnter the number of nodes : ");
+	scanf("%d",&n);
+	printf("\nEnter the cost matrix :\n");
+	for(i=0;i<n;i++)
+		for(j=0;j<n;j++)
+		{	
+			scanf("%d",&dmat[i][j]);
+			dmat[i][i]=0;
+			rt[i].dist[j]=dmat[i][j];
+			rt[i].from[j]=j;
+		}
+		do
+		{	
+			count=0;
+			for(i=0;i<n;i++)
+			for(j=0;j<n;j++)
+			for(k=0;k<n;k++)
+				if(rt[i].dist[j]>dmat[i][k]+rt[k].dist[j])
+				{
+					rt[i].dist[j]=rt[i].dist[k]+rt[k].dist[j];
+					rt[i].from[j]=k;
+					count++;
+				}
+		}while(count!=0);
+		for(i=0;i<n;i++)
+		{
+			printf("\n\nState value for router %d is \n",i+1);
+			for(j=0;j<n;j++)
+			{
+				printf("\t\nnode %d via %d Distance%d",j+1,rt[i].from[j]+1,rt[i].dist[j]);
+			}
+		}	
+	printf("\n\n");
+}
+
+
+
+
+output:
+Enter the number of nodes : 2
+
+Enter the cost matrix :
+2 5
+5 2
+
+
+State value for router 1 is
+
+node 1 via 1 Distance0
+node 2 via 2 Distance5
+
+State value for router 2 is
+
+node 1 via 1 Distance5
+node 2 via 2 Distance0
+
+
+
+
+
+
+
+
+
+set -3
+
+1)Go-Back-N Protocol.
+
+#include<stdio.h>
+int main(){
+	int window=0;
+	printf("enter Window size : ");
+	scanf("%d",&window);
+	int sent,ack,i=0;
+	while(1){
+		for(i=0;i<window;i++){
+			printf("frame Transmitted %d \n",sent);
+			sent++;
+			if(sent==window){
+				break;
+			}
+		}
+		printf("enter last received acknowledgment : ");
+		scanf("%d",&ack);
+		if(ack==window){
+			break;
+		}
+		else{
+			sent = ack;
+			}
+	}
+
+}
+
+
+
+
+
+output:
+enter Window size : 3
+frame Transmitted 0
+frame Transmitted 1
+frame Transmitted 2
+enter last received acknowledgment : 2
+frame Transmitted 2
+enter last received acknowledgment : 3
+
+
+
+set 4)
+
+1)
+broadcast tree for the subnet.
+
+
+
+
+#include <stdio.h>
+int min();
+int distance[20];
+int n;
+main()
+{
+    int adj[20][20],adj1[20][20],flag[30];
+    int i,j,root,x;
+    int source,count=1,y=0;
+    printf("enter no of nodes");
+    scanf("%d",&n);
+    printf("enter the adjacency matrix");
+    for(i=0;i<n;i++)
+    {
+    	for(j=0;j<n;j++)
+    	{
+    		scanf("%d",&adj[i][j]);
+    	}
+    }
+    printf("enter the source for broadcasting");
+    scanf("%d",&source);
+    for(i=0;i<n;i++)
+    {
+    	flag[i]=0;
+    }
+    for(root=0;root<n;root++)
+    {
+    	for(i=0;i<n;i++)
+    	{
+    		distance[i]=adj[root][i];
+    	}
+    	x=min();
+    	for(i=0;i<n;i++)
+    	{
+    		if(distance[i]==x)
+    		{
+    			adj1[root][i]=x;
+    			adj1[i][root]=x;
+    		}
+    		else
+    		{
+    			adj1[root][i]=0;
+
+    		}
+    	}
+    }
+    for(i=0;i<n;i++)
+    {
+    	for(j=0;j<n;j++)
+    	{
+    		if(adj1[i][j]!=0)
+    		{
+    			adj1[j][i]=adj[i][j];
+    		}
+    	}
+    }
+    printf("given adjacency matrix is");
+    for(i=0;i<n;i++)
+    {
+    	for(j=0;j<n;j++)
+    	{
+    		printf("%d",adj[i][j]);
+    	}
+    	printf("\n");
+    }
+    printf("minimal spanning tree");
+    for(i=0;i<n;i++)
+    {	
+    	for(j=0;j<n;j++)
+    	{
+    		printf("%d ",adj1[i][j]);
+    	}
+    	printf("\n");
+    }
+    root=source;
+    flag[root]=1;
+    while(count!=y)
+    {
+    	for(i=0;i<n;i++)
+    	{
+    		if(adj1[root][i]!=0 && flag[root]==1 && flag[i]!=1)
+    		{
+    			printf("%d sends message to %d \n",root,i);
+    			flag[i]=1;
+    		}
+    	}
+    	if(root<n-1)
+    	{
+    		root++;
+    	}
+    	else
+	{
+    		root=0;
+    	}
+    	for(i=0;i<n;i++)
+    	{
+    		if(flag[i]==0)
+   		{
+    			break;
+		}
+	}
+    	if(i==n)
+   	{
+    		count=y;
+    
+    	}
+    
+    }
+    
+}
+int min()
+{
+    int i,j=0;
+    int mini;
+    int distance1[10];
+    for(i=0;i<n;i++)
+    {
+        if(distance[i]!=0)
+        {
+            distance1[j]=distance[i];
+            j++;
+        }
+        
+    }
+    mini=distance1[0];
+    for(i=1;i<j;i++) 
+    {
+        if(distance1[i]<mini)
+        {
+            mini=distance1[i];
+        }
+    }
+    return(mini);
+ 
+}
+
+
+
+
+
+
+output:
+
+enter no of nodes2
+enter the adjacency matrix
+ 0 2
+2 0
+enter the source for broadcasting1
+given adjacency matrix is02
+20
+minimal spanning tree0 2
+2 0
+1 sends message to 0
+
+
+
+
+
+
+2)
+to implement CRC.
+
+
+#include<stdlib.h>
+#include<conio.h>
+#include<stdio.h>
+int main()
+{
+	int i,j,n,g,a,arr[20],gen[20],b[20],q[20],s;
+	printf("Transmitter side:");
+	printf("\nEnter no. of data bits:");
+	scanf("%d",&n);
+	printf("Enter data:");
+	for(i=0;i<n;i++)
+		scanf("%d",&arr[i]);
+	printf("Enter size of generator:");
+	scanf("%d",&g);
+	do{
+		printf("Enter generator:");
+		for(j=0;j<g;j++)
+			scanf("%d",&gen[j]);
+	}
+	while(gen[0]!=1);
+	printf("\n\tThe generator matrix:");
+	for(j=0;j<g;j++)
+		printf("%d",gen[j]);
+	a=n+(g-1);
+	printf("\n\tThe appended matrix is:");
+	for(i=0;i< j;++i)
+		arr[n+i]=0;
+	for(i=0;i< a;++i)
+		printf("%d",arr[i]);
+	for(i=0;i< n;++i)
+		q[i]= arr[i];
+	for(i=0;i< n;++i)
+	{
+		if(arr[i]==0)
+		{
+			for(j=i;j<g+i;++j)
+				arr[j] = arr[j]^0;
+		}
+		else
+		{
+			arr[i] = arr[i]^gen[0];
+			arr[i+1]=arr[i+1]^gen[1];
+			arr[i+2]=arr[i+2]^gen[2];
+			arr[i+3]=arr[i+3]^gen[3];
+		} 
+	}
+	printf("\n\tThe CRC is :");
+	for(i=n;i< a;++i)
+		printf("%d",arr[i]);
+	s=n+a;
+	for(i=n;i<s;i++)
+		q[i]=arr[i];
+		printf("\n");
+	for(i=0;i<a;i++)
+		printf("%d",q[i]);
+}
+
+
+
+
+
+
+output:
+
+Transmitter side:
+Enter no. of data bits:8
+Enter data:1 0 1 0 0 0 0 1
+Enter size of generator:4
+Enter generator:1 0 0 1
+
+        The generator matrix:1001
+        The appended matrix is:10100001000
+        The CRC is :111
+10100001111
